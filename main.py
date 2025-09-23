@@ -7,8 +7,7 @@ Telegram бот «Алина» на вебхуках (FastAPI + python-telegram-
   TELEGRAM_BOT_TOKEN=...           # токен от @BotFather (НЕ палить)
   OPENAI_API_KEY=...               # ключ OpenAI
   OPENAI_MODEL=gpt-4.1-mini        # или gpt-5 / gpt-5-mini
-  SYSTEM_PROMPT=...                # инструкции твоей «Алины» (в 1 строку или с 
-)
+  SYSTEM_PROMPT=...                # инструкции твоей «Алины» (в 1 строку или с \n)
   OPENAI_TEMPERATURE=0.7           # (опц.) креативность
   OPENAI_MAX_TOKENS=800            # (опц.) предел ответа
   PUBLIC_URL=https://<твой-сервис>.onrender.com   # URL после первого деплоя (для авто setWebhook)
@@ -27,7 +26,7 @@ Telegram бот «Алина» на вебхуках (FastAPI + python-telegram-
   /reset — очистить контекст диалога для текущего пользователя
 
 Подсказки:
-  * Бот хранит последние 20 сообщений контекста в памяти процесса (per‑user).
+  * Бот хранит последние 20 сообщений контекста в памяти процесса (per-user).
   * Для продакшена добавь постоянное хранилище (SQLite/Redis) — тут не обязательно.
 """
 import os
@@ -52,8 +51,7 @@ from openai import AsyncOpenAI
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 SYSTEM_PROMPT = os.getenv(
     "SYSTEM_PROMPT",
-    "Ты дружелюбный, краткий и полезный ассистент. Отвечай по-русски и на "
-    "ты, если пользователь не просит иначе."
+    "Ты дружелюбный, краткий и полезный ассистент. Отвечай по-русски и на ты, если пользователь не просит иначе."
 )
 TEMPERATURE = float(os.getenv("OPENAI_TEMPERATURE", "0.7"))
 MAX_OUTPUT_TOKENS = int(os.getenv("OPENAI_MAX_TOKENS", "800"))
@@ -82,9 +80,8 @@ ptb = Application.builder().token(TELEGRAM_BOT_TOKEN).updater(None).build()
 # === Хэндлеры ===
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
-        "Привет! Я бот на базе твоей ‘Алины’. Пиши сообщение — отвечу.
-"
-        "Команды: /reset — очистить контекст."
+        ("Привет! Я бот на базе твоей ‘Алины’. Пиши сообщение — отвечу.\n"
+         "Команды: /reset — очистить контекст.")
     )
 
 async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -184,3 +181,4 @@ async def lifespan(_: FastAPI):
 
 # Подключаем lifespan к приложению FastAPI
 app.router.lifespan_context = lifespan
+
