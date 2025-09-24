@@ -46,6 +46,16 @@ from telegram.ext import (
     filters,
 )
 from openai import AsyncOpenAI
+# Клиент OpenRouter
+client = AsyncOpenAI(
+    base_url=os.getenv("OPENAI_BASE_URL", "https://openrouter.ai/api"),
+    api_key=os.getenv("OPENAI_API_KEY"),
+    default_headers={
+        "HTTP-Referer": os.getenv("PUBLIC_URL", "https://example.com"),  # твой сайт/бот
+        "X-Title": "Alina Telegram Bot",  # любое название проекта
+    },
+)
+
 
 # === Конфиг через ENV ===
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
