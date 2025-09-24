@@ -124,13 +124,20 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     ]
 
     try:
-        resp = await client.responses.create(
-            model=OPENAI_MODEL,
-            input=input_messages,
-            temperature=TEMPERATURE,
-            max_output_tokens=MAX_OUTPUT_TOKENS,
-        )
-        answer = resp.output_text
+        # Собираем сообщения для chat.completions
+chat_messages = []
+for m in input_messages:
+    chat_messages.append({"role": m.get("role", "user"), "content": m.get("content", "")})
+
+resp = await client.chat.completions.create(
+    model=OPENAI_MODEL,                 # например: openai/gpt-4o-mini
+    messages=chat_messages,
+    temperature=TEMPERATURE,
+    max_tokens=MAX_OUTPUT_TOKENS,
+)
+
+answer = resp.choices[0].message.content if resp.choices else "Пустой ответ модели."
+
     except Exception:
         logging.exception("OpenAI API error")
         await update.message.reply_text(
